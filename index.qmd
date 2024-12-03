@@ -33,7 +33,7 @@ As a practical example, we are going to analyze flooding and potentially
 associated deforestation as a consequence of dam building for electricity 
 generation. Our area of study is a part of the river Madeira, a tributary to 
 the Amazon, located in Rondônia, Brazil. Here, between 2008 and 2016 two dams, 
-the Santo Antônio and the Jirau dam, were build in very close proximity to each 
+the Santo Antônio and the Jirau dam, were built in very close proximity to each 
 other. This caused quite the stir, as an [report](https://www.maapprogram.org/madeira/) 
 of the Monitoring of the Andean Amazon Project (MAAP) estimated some 36,000 
 hectares of primary rainforest being permanently lost due to flooding [@finer2015].
@@ -116,7 +116,7 @@ dir.create("output", showWarnings = FALSE)
 ::: {.callout-note}
 ### GDAL version
 `sf` prints informative messages about the versions of system libraries 
-it was build against. For `mapme.biodiversity` to handle vector 
+it was built against. For `mapme.biodiversity` to handle vector 
 data sources correctly, we expect `sf` to be built against 
 [`GDAL>=3.7.0`](https://gdal.org/en/latest/download_past.html).
 Since about November 2024 this requirement should be satisfied for pre-built `sf` 
@@ -519,7 +519,7 @@ human-driven deforestation along roads that already occurred prior to the year
 ```{r fig-gfw-treecover}
 #| code-fold: true
 #| fig-cap: "GFW treecover layer with values indicating the canopy cover in the year 2000 (%)."
-plot(resources$gfw_treecover + 2000, col = rev(map.pal("grass")), fun = p_aoi)
+plot(resources$gfw_treecover, col = rev(map.pal("grass")), fun = p_aoi)
 ```
 
 @fig-gfw-lossyear shows the year of forest cover loss detected by GFW between 2000
@@ -536,7 +536,7 @@ areas.
 ```{r fig-gfw-lossyear}
 #| code-fold: true
 #| fig-cap: "GFW lossyear layer with values indicating the year of detected forest loss." 
-plot(resources$gfw_lossyear, col = rev(map.pal("haxby")), fun = p_aoi)
+plot(resources$gfw_lossyear + 2000, col = rev(map.pal("haxby")), fun = p_aoi)
 ```
 
 
@@ -618,7 +618,7 @@ read_sf(dsn, layer = "indicators")
 
 While you could join  those tables manually, the `read_portfolio()` utility
 automatically takes care of re-constructing the original portfolio
-object from the output GPGK:
+object from the output GPKG:
 
 ```{r read-portfolio}
 (inds_portfolio <- read_portfolio(dsn))
