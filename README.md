@@ -10,15 +10,15 @@ you will need to restore the develeopment environment, e.g. with:
 
 
 ```shell
-$ git clone https://github.com/mapme-initiative/demo-madeira.git
-$ cd deom-madeira
-$ Rscript -e "renv::restore()"
+git clone https://github.com/mapme-initiative/demo-madeira.git
+cd demo-madeira
+Rscript -e "renv::restore()"
 ```
 
 Then to preview the project:
 
 ```shell
-$ quarto preview
+quarto preview
 ```
 
 Note, that due to the size of the required data for this tutorial,
@@ -27,5 +27,5 @@ after commiting your changes, the site must be built locally and pushed
 to the `gh-pages` branch via:
 
 ```shell
-$ quarto publish gh-pages
+quarto publish gh-pages
 ```
