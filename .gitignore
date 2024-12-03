@@ -1,0 +1,9 @@
+*.gpkg
+*.tif
+index_files
+.quarto
+.Rproj.user
+/.quarto/
+_manuscript
+.vscode
+_freeze
