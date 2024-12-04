@@ -1,0 +1,16 @@
+$theme-darkblue: #032733;
+$theme-blue: #1d7990;
+$theme-orange: #854807;
+$theme-black: #210400;
+$theme-black-alpha: #210400a4;
+$theme-white:#F7F8F9;
+
+
+/*-- scss:defaults --*/
+$body-bg: $theme-white;
+$body-color: $theme-black;
+$body-secondary: $theme-black-alpha;
+$link-color: $theme-orange;
+$navbar-bg: $theme-darkblue;
+$navbar-fg: $theme-white;
+$code-color: $theme-blue;

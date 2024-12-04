@@ -9,6 +9,7 @@ format:
     comments:
       hypothesis: true
     code-link: true
+    theme: theme.scss
     
 execute:
   freeze: auto
