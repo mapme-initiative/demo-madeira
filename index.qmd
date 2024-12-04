@@ -38,6 +38,45 @@ other. This caused quite the stir, as an [report](https://www.maapprogram.org/ma
 of the Monitoring of the Andean Amazon Project (MAAP) estimated some 36,000 
 hectares of primary rainforest being permanently lost due to flooding [@finer2015].
 
+A high level overview of workflows based on `mapme.biodiversity` is shown
+in @fig-mapme-workflows.
+
+```{mermaid}
+%%| echo: false
+%%| label: fig-mapme-workflows
+%%| fig-cap: "High-level workflow diagram for mapme.biodiversity."
+
+graph TB
+
+    classDef default fill:#1d7990,stroke-width:2px,stroke:#034858,color:#F7F8F9;
+
+    A(Portfolio initialization)
+    B(Get resources)
+    C(Calculate indicators)
+    D(Statistical analysis within R)
+    E(Export to GeoPackage)
+
+    A-->B
+    B-->C
+    C-->D
+    C-->E
+```
+
+This translates into the following pseudo-code, which we will unwrap in
+the course of this tutorial:
+
+```{r mapme-example}
+#| eval: false
+library(mapme.biodiversity)
+library(sf)
+
+mapme_options(outdir = "./input")
+portfolio <- st_read("my-aoi.gpkg")
+portfolio <- get_resources(portfolio, get_my_resource())
+indicators <- calc_indicators(portfolio, calc_my_indicator())
+write_portfolio(indicators, "my-indicators.gpkg")
+```
+
 
 :::{.callout-tip}
 ## Terminology of `mapme.biodiversity`
@@ -138,7 +177,7 @@ earlier than for the Jirau dam.
 dams <- st_as_sf(
     data.frame(
         name = c("Santo Antonio", "Jirau"),
-        start_flooding = c(2011, 2013),
+        start_flooding = as.POSIXct(c("2011-01-01", "2013-01-01")),
         longitude = c(-63.9506, -64.6478),
         latitude = c(-8.8016, -9.2665)
     ),
@@ -173,7 +212,7 @@ if (!file.exists(dsn)) {
 
 Now that we have our raw inputs, we will have to design our specific AOIs.
 The Madeira river flows from the Andes toward the Amazon basin, that is
-from West to East. Flooding after dam construction evidently occurs upstream of  
+from West to East. Flooding after dam construction evidently occurs upstream of 
 a dam's location, which is to the West in the case of the Madeira river.
 To analyze forest cover loss potentially associated with flooding we might
 decide to use a buffer zone around the river banks for a similar stretch of land 
@@ -184,6 +223,7 @@ present case. We thus construct a directed bounding box and return the
 resulting river course after a final crop.
 
 ```{r fun-crop_upstream}
+#| code-fold: true
 crop_upstream <- function(
     point,
     river,
@@ -214,15 +254,17 @@ the dam construction.
 
 ```{r crop-upstream}
 size <- units::as_units(50, "km")
-dams_buffer <- st_buffer(dams, dist = size)
-geoms <- lapply(1:2, \(i) crop_upstream(st_geometry(dams[i,]), st_geometry(madeira), dist = size, dir = "W")) 
-geoms <- do.call(c, geoms)
-upstream <- dams
-st_geometry(upstream) <- geoms
+
+upstream <- dams |>
+  rowwise() |>
+  mutate(geometry = crop_upstream(geometry, st_geometry(madeira), dist = size, dir = "W"))
 st_length(upstream)
-upstream_buffer <- st_buffer(upstream, dist = units::as_units(5, "km"))
-st_area(dams_buffer)
+
+upstream_buffer <- st_buffer(upstream, dist = size / 10)
 st_area(upstream_buffer)
+
+dams_buffer <- st_buffer(dams, dist = size)
+st_area(dams_buffer)
 ```
 
 The interactive visualization in @fig-leaflet-map shows our AOI definition
@@ -281,9 +323,11 @@ For this, we create a portfolio consisting of our upstream buffers as well as
 the wider buffers around the dam locations:
 
 ```{r create-portfolio}
-portfolio <- do.call(rbind, list(dams_buffer, upstream_buffer))
-portfolio$type <- c(rep("buffer", 2), rep("upstream", 2))
-portfolio$assetid <- 1:nrow(portfolio)
+portfolio <- bind_rows(dams_buffer, upstream_buffer) |>
+  mutate(
+    type = c(rep("buffer", 2), rep("upstream", 2)),
+    assetid = row_number()
+  )
 portfolio
 ```
 
@@ -342,7 +386,7 @@ to learn more about the other parameters.
 ```{r opts-2}
 mapme_options(
     outdir = "./input",
-    chunk_size = as.numeric(area / 4)
+    chunk_size = area / 4
 )
 mapme_options()
 ```
@@ -691,7 +735,7 @@ for Jiaru while only about 2,000 ha for Santo Antonio.
 
 ```{r fig-gg-gsw-ts}
 #| code-fold: true
-#| fig-cap: "GSW timeseries"
+#| fig-cap: "GSW timeseries with vertical lines indicating the start year of flooding."
 upstreams$gsw_timeseries[[1]]
 
 upstreams |>
@@ -699,6 +743,7 @@ upstreams |>
     filter(!variable %in% c("no_observations", "not_water")) |>
     ggplot(aes(x = datetime, y = value, color = name, linetype = variable)) +
     geom_line(lwd = 1) +
+    geom_vline(aes(xintercept = start_flooding, color = name), lwd = 1, linetype = 3) +
     scale_linetype_manual(values = c(1, 4)) +
     scale_color_manual(values = colors) +
     scale_x_datetime(date_labels = "%Y", date_breaks = "2 years", date_minor_breaks = "1 years")  +
@@ -722,7 +767,7 @@ During the same time, forest cover losses amount to ~18,000 ha.
 
 ```{r fig-gg-treecover-loss}
 #| code-fold: true
-#| fig-cap: "Cumulative tree cover losses as indicated by GFW between 2000 and 2020"
+#| fig-cap: "Cumulative tree cover losses (GFW) with vertical lines indicating the year of flooding."
 upstreams$treecover_area[[1]]
 
 upstreams |>
@@ -730,9 +775,10 @@ upstreams |>
     mutate(loss = cumsum(abs(c(0, diff(value)))), .by = name) |>
     ggplot(aes(x = datetime, y = loss, color = name)) +
     geom_line(lwd = 1) +
+    geom_vline(aes(xintercept = start_flooding, color = name), lwd = 1, linetype = 3) +
     scale_color_manual(values = colors) +
     scale_x_datetime(date_labels = "%Y", date_breaks = "2 years", date_minor_breaks = "1 years")  +
-    scale_y_continuous(breaks = seq(0, 24000, 4000), expand = c(0,0)) +
+    scale_y_continuous(breaks = seq(0, 24000, 4000), expand = c(0,1000)) +
     labs(x = "Time", y = "Cumulative tree cover loss [ha]", color = "Location") +
     my_theme() 
 ```
