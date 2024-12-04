@@ -38,6 +38,45 @@ other. This caused quite the stir, as an [report](https://www.maapprogram.org/ma
 of the Monitoring of the Andean Amazon Project (MAAP) estimated some 36,000 
 hectares of primary rainforest being permanently lost due to flooding [@finer2015].
 
+A high level overview of workflows based on `mapme.biodiversity` is shown
+in @fig-mapme-workflows.
+
+```{mermaid}
+%%| echo: false
+%%| label: fig-mapme-workflows
+%%| fig-cap: "High-level workflow diagram for mapme.biodiversity."
+
+graph TB
+
+    classDef default fill:#1d7990,stroke-width:2px,stroke:#034858,color:#F7F8F9;
+
+    A(Portfolio initialization)
+    B(Get resources)
+    C(Calculate indicators)
+    D(Statistical analysis within R)
+    E(Export to GeoPackage)
+
+    A-->B
+    B-->C
+    C-->D
+    C-->E
+```
+
+This translates into the following pseudo-code, which we will unwrap in
+the course of this tutorial:
+
+```{r mapme-example}
+#| eval: false
+library(mapme.biodiversity)
+library(sf)
+
+mapme_options(outdir = "./input")
+portfolio <- st_read("my-aoi.gpkg")
+portfolio <- get_resources(portfolio, get_my_resource())
+indicators <- calc_indicators(portfolio, calc_my_indicator())
+write_portfolio(indicators, "my-indicators.gpkg")
+```
+
 
 :::{.callout-tip}
 ## Terminology of `mapme.biodiversity`
