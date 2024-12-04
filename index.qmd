@@ -212,7 +212,7 @@ if (!file.exists(dsn)) {
 
 Now that we have our raw inputs, we will have to design our specific AOIs.
 The Madeira river flows from the Andes toward the Amazon basin, that is
-from West to East. Flooding after dam construction evidently occurs upstream of  
+from West to East. Flooding after dam construction evidently occurs upstream of 
 a dam's location, which is to the West in the case of the Madeira river.
 To analyze forest cover loss potentially associated with flooding we might
 decide to use a buffer zone around the river banks for a similar stretch of land 
