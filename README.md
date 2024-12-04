@@ -10,7 +10,7 @@ The rendered version can be visited by following this link:
 [https://mapme-initiative.github.io/demo-madeira/](https://mapme-initiative.github.io/demo-madeira/)
 
 
-## For developers
+## For contributors
 
 The R dependencies are tracked via `renv`. After cloning the repository
 you will need to restore the development environment, e.g. with:
@@ -29,7 +29,7 @@ quarto preview
 
 Note, that due to the size of the required data for this tutorial,
 the site is not automatically build with GitHub actions. Instead,
-after commiting your changes, the site must be built locally and pushed
+after committing your changes, the site must be built locally and pushed
 to the `gh-pages` branch via:
 
 ```shell
