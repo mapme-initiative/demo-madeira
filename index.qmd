@@ -223,6 +223,7 @@ present case. We thus construct a directed bounding box and return the
 resulting river course after a final crop.
 
 ```{r fun-crop_upstream}
+#| code-fold: true
 crop_upstream <- function(
     point,
     river,
@@ -253,15 +254,17 @@ the dam construction.
 
 ```{r crop-upstream}
 size <- units::as_units(50, "km")
-dams_buffer <- st_buffer(dams, dist = size)
-geoms <- lapply(1:2, \(i) crop_upstream(st_geometry(dams[i,]), st_geometry(madeira), dist = size, dir = "W")) 
-geoms <- do.call(c, geoms)
-upstream <- dams
-st_geometry(upstream) <- geoms
+
+upstream <- dams |>
+  rowwise() |>
+  mutate(geometry = crop_upstream(geometry, st_geometry(madeira), dist = size, dir = "W"))
 st_length(upstream)
-upstream_buffer <- st_buffer(upstream, dist = units::as_units(5, "km"))
-st_area(dams_buffer)
+
+upstream_buffer <- st_buffer(upstream, dist = size / 10)
 st_area(upstream_buffer)
+
+dams_buffer <- st_buffer(dams, dist = size)
+st_area(dams_buffer)
 ```
 
 The interactive visualization in @fig-leaflet-map shows our AOI definition
@@ -320,9 +323,11 @@ For this, we create a portfolio consisting of our upstream buffers as well as
 the wider buffers around the dam locations:
 
 ```{r create-portfolio}
-portfolio <- do.call(rbind, list(dams_buffer, upstream_buffer))
-portfolio$type <- c(rep("buffer", 2), rep("upstream", 2))
-portfolio$assetid <- 1:nrow(portfolio)
+portfolio <- bind_rows(dams_buffer, upstream_buffer) |>
+  mutate(
+    type = c(rep("buffer", 2), rep("upstream", 2)),
+    assetid = row_number()
+  )
 portfolio
 ```
 
@@ -381,7 +386,7 @@ to learn more about the other parameters.
 ```{r opts-2}
 mapme_options(
     outdir = "./input",
-    chunk_size = as.numeric(area / 4)
+    chunk_size = area / 4
 )
 mapme_options()
 ```
