@@ -1,18 +1,18 @@
 project:
   type: manuscript
-
-manuscript:
-  article: index.qmd
-
-format:
-  html:
-    comments:
-      hypothesis: true
-    code-link: true
-    theme: theme.scss
-    
 execute:
   freeze: auto
-
-
-
+manuscript:
+  code-links: 
+    - text: MAPME
+      icon: globe-europe-africa
+      href: https://www.mapme-initiative.org/
+    - text: GitHub
+      icon: github
+      href: https://github.com/mapme-initiative/demo-madeira/
+format:
+  html:
+    code-link: true
+    theme: theme.scss
+    comments:
+      hypothesis: true

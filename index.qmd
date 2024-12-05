@@ -3,7 +3,7 @@ title: mapme.biodiversity - A Tool for Reproducible Conservation Data Analysis
 authors:
   - name: Darius A. Görgen
     affiliation: MAPME Initiative
-    email: info@dariusgoergen.com
+    email: contact@mapme-initiative.org
     orcid: 0009-0008-5503-7704
     roles: writing
     corresponding: true
