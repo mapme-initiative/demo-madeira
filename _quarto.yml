@@ -13,6 +13,6 @@ manuscript:
 format:
   html:
     code-link: true
-    theme: theme.scss
+    theme: assets/theme.scss
     comments:
       hypothesis: true

@@ -9,8 +9,8 @@ authors:
     corresponding: true
 date: 2024-12-03
 date-modified: last-modified
-bibliography: references.bib
-css: styles.css
+bibliography: assets/references.bib
+css: assets/styles.css
 knitr:
   opts_chunk: 
     collapse: true
