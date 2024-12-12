@@ -810,6 +810,19 @@ buffers |>
   portfolio_wide()
 ```
 
+## Get Involved
+
+The contents of this workshop are strongly based on the `mapme.biodiversity`
+package. If you're interested in the inner workings of the package, you can
+further explore it on
+[GitHub](https://github.com/mapme-initiative/mapme.biodiversity). On there, you
+can also learn more about how to extend the package to work with custom
+datasets. You can also report (and fix) bugs you encounter or get
+involved in discussions about upcoming features. You can also find other
+repositories on our [GitHub organization](https://github.com/mapme-initiative),
+featuring further use cases and useful helper tools.
+
+
 ## References
 
 ::: {#refs}
