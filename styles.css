@@ -1,6 +1,0 @@
-/* fix for leaflet control text being middle aligned
-https://github.com/quarto-dev/quarto-cli/issues/7843
-*/
-figure.quarto-float div.leaflet-control {
-    text-align: left;
-  }
